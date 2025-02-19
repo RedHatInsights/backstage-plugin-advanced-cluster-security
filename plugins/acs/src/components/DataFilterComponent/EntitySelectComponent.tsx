@@ -1,60 +1,52 @@
 import React from 'react';
-import {
-    Select,
-    SelectOption,
-    SelectList,
-    MenuToggle,
-    MenuToggleElement,
-} from '@patternfly/react-core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+      maxWidth: 300,
+    },
+    chips: {
+      display: 'flex',
+      flexWrap: 'wrap',
+    },
+    chip: {
+      margin: 2,
+    },
+    noLabel: {
+      marginTop: theme.spacing(3),
+    },
+  }),
+);
 
 export const EntitySelectComponent = ({ options, setSelectedEntity }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   /* eslint @typescript-eslint/no-shadow: ["error", { "allow": ["isOpen"] }]*/
   const [selected, setSelected] = React.useState<string>(Object.keys(options)[0]);
 
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelected(event.target.value as string);
+    setSelectedEntity(event.target.value as string)
   };
-
-  const onSelect = (_event: React.MouseEvent<Element, MouseEvent> | undefined, value: string | number | undefined) => {
-    setSelected(value as string);
-    setSelectedEntity(value as string)
-    setIsOpen(false);
-  };
-
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      onClick={onToggleClick}
-      isExpanded={isOpen}
-      style={
-        {
-          width: '250px'
-        } as React.CSSProperties
-      }
-    >
-      {selected}
-    </MenuToggle>
-  );
 
   return (
-    <React.Fragment>
-      <Select
-        id="simple-select"
-        isOpen={isOpen}
-        selected={selected}
-        onSelect={onSelect}
-        onOpenChange={(isOpen) => setIsOpen(isOpen)}
-        toggle={toggle}
-        shouldFocusToggleOnSelect
-      >
-        <SelectList>
-          {Object.entries(options).map(([key, value]) => (
-            <SelectOption value={key}>{key}</SelectOption>
-          ))}
-        </SelectList>
-      </Select>
-    </React.Fragment>
+    <Select
+      value={selected}
+      onChange={handleChange}
+      displayEmpty
+      inputProps={{ 'aria-label': 'Without label' }}
+    >
+      {Object.entries(options).map(([key, value]) => (
+        <MenuItem value={key}>{key}</MenuItem>
+      ))}
+    </Select>
   );
 }
 

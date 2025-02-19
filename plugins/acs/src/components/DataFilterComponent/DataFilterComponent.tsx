@@ -4,9 +4,31 @@ import { AttributeSelectComponent } from './AttributeSelectComponent';
 import { InputFieldComponent } from './InputFieldComponent';
 import { CheckboxSelectComponent } from './CheckboxSelectComponent';
 import { Toolbar, ToolbarGroup, ToolbarItem, ToolbarContent } from '@patternfly/react-core';
-import { useTheme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, useTheme } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    dropDowns: {
+      minWidth: 150,
+      maxWidth: 300,
+      marginBottom: 20,
+    },
+    dropDownsMulti: {
+      marginLeft: theme.spacing(5),
+      minWidth: 150,
+      maxWidth: 300,
+    },
+    textBox: {
+      minWidth: 350,
+      maxWidth: 400,
+    },
+  }),
+);
 
 export const DataFilterComponent = ({ setFilters, data }) => {
+    const classes = useStyles();
     const attributes = ['Name', 'Discovered time', 'CVSS'];
     const entities = {
         'Image': [ 'Name'],
@@ -71,44 +93,38 @@ export const DataFilterComponent = ({ setFilters, data }) => {
   }, [selectedEntity, selectedAttribute, userText, selectedCveSeverityOptions, selectedCveStatusOptions]);
 
   return (
-    <Toolbar className={isDarkMode ? 'pf-v5-theme-dark' : 'pf-v5-theme-light' }>
-      <ToolbarContent>
-        <ToolbarGroup variant="filter-group">
-          <ToolbarItem>
-            <EntitySelectComponent
-                options={entities}
-                setSelectedEntity={setSelectedEntity}
-            />
-
-            <AttributeSelectComponent
-                options={attributes}
-                displayAttributes={getSelectedAttributes()}
-                setSelectedAttribute={setSelectedAttribute}
-            />
-
-            <InputFieldComponent setUserText={setUserText} />
-          </ToolbarItem>
-        </ToolbarGroup>
-
-        <ToolbarGroup variant="button-group">
-          <ToolbarItem spacer="spacerMd">
-            <CheckboxSelectComponent
-                options={cveSeverityOptions}
-                dropdownName={"CVE severity"}
-                setSelectedOptions={setSelectedCveSeverityOptions}
-            />
-          </ToolbarItem>
-          <ToolbarItem>
-            <CheckboxSelectComponent
-                options={cveStatusOptions}
-                dropdownName={"CVE status"}
-                setSelectedOptions={setSelectedCveStatusOptions}
-            />
-          </ToolbarItem>
-        </ToolbarGroup>
-
-      </ToolbarContent>
-    </Toolbar>
+      <div>
+      <FormControl className={classes.dropDowns}>
+   	         <EntitySelectComponent
+   	             options={entities}
+   	             setSelectedEntity={setSelectedEntity}
+   	         />
+      </FormControl>
+      <FormControl className={classes.dropDowns}>
+   	         <AttributeSelectComponent
+   	             options={attributes}
+   	             displayAttributes={getSelectedAttributes()}
+   	             setSelectedAttribute={setSelectedAttribute}
+   	         />
+      </FormControl>
+      <FormControl className={classes.textBox}>
+   	         <InputFieldComponent setUserText={setUserText} />
+      </FormControl>
+      <FormControl className={classes.dropDownsMulti}>
+   	         <CheckboxSelectComponent
+   	             options={cveSeverityOptions}
+   	             dropdownName={"CVE severity"}
+   	             setSelectedOptions={setSelectedCveSeverityOptions}
+   	         />
+      </FormControl>
+      <FormControl className={classes.dropDownsMulti}>
+   	         <CheckboxSelectComponent
+   	             options={cveStatusOptions}
+   	             dropdownName={"CVE status"}
+   	             setSelectedOptions={setSelectedCveStatusOptions}
+   	         />
+      </FormControl>
+      </div>
   )
 }
 

@@ -153,7 +153,7 @@ const serviceEntityPage = (
       {overviewContent}
     </EntityLayout.Route>
 
-    <EntityLayout.Route path="/acs" title="RHACS">
+    <EntityLayout.Route path="/acs" title="Security">
       <EntityACSContent />
     </EntityLayout.Route>
 

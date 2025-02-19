@@ -33,6 +33,8 @@ export const VulnerabilitiesComponent = ({ deploymentName }) => {
 
     const [filters, setFilters] = useState({});
 
+    console.log("filters:", filters)
+
     if (ACSDataError) {
         return (
             <InfoCard>
@@ -53,11 +55,14 @@ export const VulnerabilitiesComponent = ({ deploymentName }) => {
 
     if (ACSDataResult.length === 0) {
         return (
-            <InfoCard>
-                <Typography align="center" variant="button">
-                    No results found for query {deploymentName}. To configure this component to display data from ACS, add the annotation `rhdh/acs-deployment:` followed by a comma separated string of deployment names to the entity.
-                </Typography>
-            </InfoCard>
+          <InfoCard>
+            <Typography variant="h5" component="h5" align="center">
+               No results found for query {deploymentName}.
+            </Typography>
+            <Typography variant="subtitle1" align="center">
+               To configure this component to display data from ACS, add the annotation <Box component="pre" sx={{ display: 'inline' }}>`rhdh/acs-deployment:</Box> followed by a comma separated string of deployment names to the entity.
+            </Typography>
+          </InfoCard>
         );
     }
 

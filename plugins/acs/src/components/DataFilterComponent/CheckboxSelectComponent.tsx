@@ -1,37 +1,44 @@
 import React, { useEffect } from 'react';
-import { Select, SelectOption, SelectList, MenuToggle, MenuToggleElement, Badge } from '@patternfly/react-core';
+import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import ListItemText from '@material-ui/core/ListItemText';
+import Select from '@material-ui/core/Select';
+import Checkbox from '@material-ui/core/Checkbox';
+import Chip from '@material-ui/core/Chip';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 export const CheckboxSelectComponent: React.FunctionComponent = ({ setSelectedOptions, options, dropdownName }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState<number[]>([]);
 
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedItems(event.target.value as string[]);
   };
 
-  const onSelect = (_event: React.MouseEvent<Element, MouseEvent> | undefined, value: string | number | undefined) => {
-    if (selectedItems.includes(value as number)) {
-      setSelectedItems(selectedItems.filter((id) => id !== value));
-    } else {
-      setSelectedItems([...selectedItems, value as number]);
-    }
-  };
-
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      onClick={onToggleClick}
-      isExpanded={isOpen}
-      style={
-        {
-          width: '150px'
-        } as React.CSSProperties
+  const handleChangeMultiple = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const { options } = event.target as HTMLSelectElement;
+    const value: string[] = [];
+    for (let i = 0, l = options.length; i < l; i += 1) {
+      if (options[i].selected) {
+        value.push(options[i].value);
       }
-    >
-      {dropdownName}
-      {selectedItems.length > 0 && <Badge isRead>{selectedItems.length}</Badge>}
-    </MenuToggle>
-  );
+    }
+    setSelectedOptions(value);
+  };
 
   useEffect(() => {
     setSelectedOptions(selectedItems);
@@ -39,21 +46,27 @@ export const CheckboxSelectComponent: React.FunctionComponent = ({ setSelectedOp
 
   return (
     <Select
-      role="menu"
-      id="checkbox-select"
-      isOpen={isOpen}
-      selected={selectedItems}
-      onSelect={onSelect}
-      onOpenChange={(nextOpen: boolean) => setIsOpen(nextOpen)}
-      toggle={toggle}
+      labelId="demo-mutiple-checkbox-label"
+      id="demo-mutiple-checkbox"
+      multiple
+      value={selectedItems}
+      onChange={handleChange}
+      input={<Input />}
+      renderValue={(selected) => {
+        if ((selected as string[]).length === 0) {
+          return <em>Placeholder</em>;
+        }
+
+        return (selected as string[]).join(', ');
+      }}
+      MenuProps={MenuProps}
     >
-      <SelectList>
-        {options.map((value, index) => (
-          <SelectOption hasCheckbox value={value} isSelected={selectedItems.includes(value)}>
-            {value}
-          </SelectOption>
-        ))}
-      </SelectList>
+      {options.map((value) => (
+        <MenuItem key={value} value={value}>
+          <Checkbox checked={selectedItems.indexOf(value) > -1} />
+          <ListItemText primary={value} />
+        </MenuItem>
+      ))}
     </Select>
   );
 };

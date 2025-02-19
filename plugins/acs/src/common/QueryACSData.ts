@@ -1,5 +1,5 @@
 import react, { useCallback, useState, useEffect } from 'react';
-import { useApi,  fetchApiRef, configApiRef } from '@backstage/core-plugin-api';
+import { useApi,  fetchApiRef, configApiRef, discoveryApiRef } from '@backstage/core-plugin-api';
 
 export const QueryACSData = (deploymentName: string) => {
     /* eslint-disable consistent-return */
@@ -9,7 +9,11 @@ export const QueryACSData = (deploymentName: string) => {
 
     // Get Backstage objects
     const config = useApi(configApiRef);
-    const backendUrl = config.getString('backend.baseUrl');
+
+    // Retrieve proxy url from api
+    const discoveryApi = useApi(discoveryApiRef);
+    let backendUrl = "";
+    discoveryApi.getBaseUrl('proxy').then(value => (backendUrl = value))
 
     const fetchApi = useApi(fetchApiRef);
 
@@ -21,7 +25,7 @@ export const QueryACSData = (deploymentName: string) => {
         const deploymentNameArr = convertDeploymentNameStringToArray();
 
         deploymentNameArr.forEach((name: string) => {
-            fetchApi.fetch(`${backendUrl}/api/proxy/acs/v1/export/vuln-mgmt/workloads?query=Deployment%3A${name}`)
+            fetchApi.fetch(`${backendUrl}/acs/v1/export/vuln-mgmt/workloads?query=Deployment%3A${name}`)
                 .then(response => response.text())
                 .then(text => {
                     const lines = text.split('\n');

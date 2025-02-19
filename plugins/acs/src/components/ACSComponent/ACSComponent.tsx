@@ -32,7 +32,7 @@ export const ACSComponent = () => {
             <Typography variant="h5" gutterBottom>{title}</Typography>
             <Typography variant="subtitle2" gutterBottom>{subheader}</Typography>
           </Grid>
-          <Grid item xs justifyContent="flex-end">
+          <Grid item justifyContent="flex-end">
             <Button href={`${acsUrl}`} target="_blank" variant="outlined">View in Advanced Cluster Security</Button>
           </Grid>
         </Grid>
